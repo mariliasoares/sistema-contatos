@@ -18,15 +18,18 @@
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Tipo</th>
+                                <th>Criado em</th>
                                 <th>Ações</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>183</td>
-                                <td>John Doe</td>
-                                <td>admin@gmail.com</td>
-                                <th>Tipo</th>
+                            <tr v-for="user in users" :key="user.id">
+                                <td>{{user.id}}</td>
+                                <td>{{user.name}}</td>
+                                <td>{{user.email}}</td>
+                                <td v-if="user.type === '1'">Admin</td>
+                                <td v-else>Usuário</td>
+                                <td>{{user.created_at}}</td>
                                 <td>
                                     <a href="#"><i class="fa fa-edit"></i></a>
                                     /
@@ -82,7 +85,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-primary">Salvar</button>
+                        <button type="submit" class="btn btn-primary">Salvar</button>
                     </div>
                     </form>
                 </div>
@@ -95,21 +98,29 @@
     export default {
         data() {
             return  {
+                users: {},
                 form: new Form({
                     name: '',
                     email: '',
-                    type: '',
-                    password: '',                    
+                    password: '',
+                    type: '',   
                 })
             }
         },
         methods: {
+            loadUsuarios() {
+                axios.get("api/user").then(({data}) => (this.users = data.data));
+            },
+
             criarUsuario() {
                 this.form.post('api/user')
             }
         },
         mounted() {
             console.log('Component mounted.')
+        },
+        created() { //funçao chamada quando o componente é criado
+            this.loadUsuarios();
         }
     }
 </script>
