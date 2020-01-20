@@ -29,7 +29,7 @@
                                 <td>{{user.email}}</td>
                                 <td v-if="user.type === '1'">Admin</td>
                                 <td v-else>Usuário</td>
-                                <td>{{user.created_at}}</td>
+                                <td>{{user.created_at | myDate}}</td>
                                 <td>
                                     <a href="#"><i class="fa fa-edit"></i></a>
                                     /
@@ -113,7 +113,12 @@
             },
 
             criarUsuario() {
-                this.form.post('api/user')
+                this.form.post('api/user');
+                toast.fire({
+                    icon: 'success',
+                    title: 'Signed in successfully'
+                })
+                $('#addNovo').modal('hide')
             }
         },
         mounted() {
