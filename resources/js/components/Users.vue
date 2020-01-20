@@ -6,7 +6,7 @@
                     <div class="card-header">
                         <h3 class="card-title">Lista de usuários</h3>
                         <div class="card-tools">
-                            <button class="btn btn-success" data-toggle="modal" data-target="#addNovo"><i class="fas fa-user-plus fa-fw"></i> Novo Usuário</button>
+                            <button class="btn btn-success" @click="openModal"><i class="fas fa-user-plus fa-fw"></i> Novo Usuário</button>
                         </div>
                     </div>
                     <!-- /.card-header -->
@@ -31,9 +31,9 @@
                                 <td v-else>Usuário</td>
                                 <td>{{user.created_at | myDate}}</td>
                                 <td>
-                                    <a href="#"><i class="fa fa-edit"></i></a>
+                                    <a href="#" @click="editModal(user)"><i class="fa fa-edit"></i></a>
                                     /
-                                    <a href="#"><i class="fa fa-trash red"></i></a>
+                                    <a href="#" @click="deleteUser(user.id)"><i class="fa fa-trash red"></i></a>
                                 </td>
                             </tr>
                             </tbody>
@@ -48,12 +48,13 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="addNovoLabel">Novo Usuário</h5>
+                        <h5 class="modal-title" v-show="!editmode" id="addNovoLabel">Novo Usuário</h5>
+                        <h5 class="modal-title" v-show="editmode" id="addNovoLabel">Editar Usuário</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form @submit.prevent="criarUsuario">
+                    <form @submit.prevent="editmode ? editarUsuario() : criarUsuario()">
                     <div class="modal-body">
                         <div class="form-group">
                             <input v-model="form.name" type="text" name="name"
@@ -98,27 +99,101 @@
     export default {
         data() {
             return  {
+                editmode: false,
                 users: {},
                 form: new Form({
+                    id: '',
                     name: '',
                     email: '',
                     password: '',
-                    type: '',   
+                    type: '',
+                    foto: '',
                 })
             }
         },
         methods: {
+            editarUsuario(id) {
+                this.form.put('api/user/'+this.form.id)
+                .then(() => {
+                    swal.fire(
+                        'Alterado',
+                        'Usuário alterado!',
+                        'success'
+                    )
+                    Fire.$emit('mudouDados');
+                    $('#addNovo').modal('hide')
+                }).catch(() => {
+                    swal.fire(
+                        'Falha',
+                        'Algo deu errado!',
+                        'warning'
+                    )
+                    $('#addNovo').modal('hide')
+                });
+            },
+            editModal(user) {
+                this.editmode = true;
+                this.form.reset();
+                $('#addNovo').modal('show');
+                this.form.fill(user);
+            },
+            openModal() {
+                this.editmode = false;
+                this.form.reset();
+                $('#addNovo').modal('show');
+            },
+            deleteUser(id) {
+                swal.fire({
+                    title: 'Tem certeza?',
+                    text: "Esta ação não será desfeita!",
+                    type: 'warning',
+                    icon: 'Atenção',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sim, deletar!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    //send request to the server
+                    if(result.value) {
+                        this.form.delete('api/user/'+id).then(() => {
+                            swal.fire(
+                                'Excluído',
+                                'Usuário deletado!',
+                                'success'
+                            )
+                            Fire.$emit('mudouDados');
+                        }).catch(() => {
+                            swal.fire(
+                                'Falha',
+                                'Algo deu errado!',
+                                'warning'
+                            )
+                        })
+                    }
+                })
+            },
             loadUsuarios() {
                 axios.get("api/user").then(({data}) => (this.users = data.data));
             },
 
             criarUsuario() {
-                this.form.post('api/user');
-                toast.fire({
-                    icon: 'success',
-                    title: 'Signed in successfully'
+                this.form.post('api/user')
+                .then(() => {
+                    Fire.$emit('mudouDados'); //we can acess to emit event
+                    toast.fire({
+                        icon: 'success',
+                        title: 'Usuário registrado com sucesso!'
+                    })
+                    $('#addNovo').modal('hide')
                 })
-                $('#addNovo').modal('hide')
+                .catch(() => {
+                    // toast.fire({
+                    //     icon: 'error',
+                    //     title: 'Erro ao criar usuário!'
+                    // })
+                    // $('#addNovo').modal('hide')
+                })
             }
         },
         mounted() {
@@ -126,6 +201,9 @@
         },
         created() { //funçao chamada quando o componente é criado
             this.loadUsuarios();
+            Fire.$on('mudouDados', () => { //on using the same event can listen for, trigger a function
+                this.loadUsuarios();
+            });
         }
     }
 </script>

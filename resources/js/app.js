@@ -52,6 +52,8 @@ Vue.filter('myDate', function(created) {
   return moment().format("DD MMMM YYYY"); 
 });
 
+window.Fire = new Vue(); //custom event: register globally, instance of vue
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
