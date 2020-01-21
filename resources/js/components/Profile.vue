@@ -13,7 +13,7 @@
                     <div class="card-body box-profile">
                         <div class="text-center">
                         <img class="profile-user-img img-fluid img-circle"
-                        src="'./img/profile.png'"
+                            :src="getProfilePhoto()"
                             style="background-image:url('./img/profile.png')"
                             alt="picture">
                         </div>
@@ -29,30 +29,37 @@
                       <div class="form-group row">
                         <label for="inputName" class="col-sm-2 col-form-label">Nome</label>
                         <div class="col-sm-10">
-                          <input type="text" v-model="form.name" class="form-control" id="inputName">
+                          <input type="name" v-model="form.name" class="form-control" id="inputName" 
+                          placeholder="Nome" :class="{ 'is-invalid': form.errors.has('name') }">
+                          <has-error :form="form" field="name"></has-error>
                         </div>
                       </div>
                       <div class="form-group row">
                         <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
                         <div class="col-sm-10">
-                          <input type="email" v-model="form.email" class="form-control" id="inputEmail">
-                        </div>
-                      </div>
-                      <div class="form-group row">
-                        <label for="inputPassword" class="col-sm-2 col-form-label">Senha</label>
-                        <div class="col-sm-10">
-                          <input type="text" v-model="form.password" class="form-control" id="inputSenha" placeholder="***">
+                          <input type="email" v-model="form.email" class="form-control" id="inputEmail" 
+                          placeholder="Email"  :class="{ 'is-invalid': form.errors.has('email') }">
+                          <has-error :form="form" field="email"></has-error>
                         </div>
                       </div>
                       <div class="form-group row">
                         <label for="inputType" class="col-sm-2 col-form-label">Tipo</label>
                         <div class="col-sm-10">
-                          <select name="type" v-model="form.type" id="type" class="form-control"
-                            :class="{ 'is-invalid': form.errors.has('name') }">
+                          <select type="type" name="type" v-model="form.type" id="type" class="form-control"
+                            :class="{ 'is-invalid': form.errors.has('type') }">
+                            <has-error :form="form" field="email"></has-error>
                             <option value="">Tipo</option>
                             <option value="1">Admin</option>
                             <option value="2">Usuário</option>
                         </select>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="password" class="col-sm-7 col-form-label">Senha (deixe em branco se não for mudar)</label>
+                        <div class="col-sm-5">
+                          <input type="password" v-model="form.password" class="form-control" id="password" placeholder="Senha"
+                          :class="{ 'is-invalid': form.errors.has('password') }">
+                          <has-error :form="form" field="password"></has-error>
                         </div>
                       </div>
                       <div class="form-group row">
@@ -92,9 +99,17 @@
             console.log('Component mounted.')
         },
         methods: {
+          getProfilePhoto() {
+            return "img/profile/" + this.form.photo;
+          },
           updateInfo() {
             this.form.put('api/profile/').then(()=> {
-
+              swal.fire(
+                  'Alterado',
+                  'Cadastro alterado!',
+                  'success'
+              )
+              Fire.$emit('mudouPerfil');
             }).catch(() => {
               
             })
@@ -108,10 +123,16 @@
               this.form.photo = reader.result;
             }
             reader.readAsDataURL(file);
+          },
+          loadPerfil(){
+            axios.get('api/profile').then(({data}) => (this.form.fill(data)));
           }
         },
         created() { //http request to server and get the information
-            axios.get('api/profile').then(({data}) => (this.form.fill(data)));
+            this.loadPerfil();
+            Fire.$on('mudouPerfil', () => {
+              this.loadPerfil();
+            });
         }
     }
 </script>

@@ -35,7 +35,6 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-
         $this->validate($request, [
             'name' => 'required|string|max:200',
             'email' => 'required|string|email|max:200|unique:users',
@@ -45,7 +44,6 @@ class UserController extends Controller
         return User::create([
             'name' => $request['name'],
             'email' => $request['email'],
-            'foto' => $request['foto'],
             'type' => $request['type'],
             'password' => Hash::make($request['password']),
         ]);
@@ -58,11 +56,11 @@ class UserController extends Controller
     public function updateProfile(Request $request) {
         $user = auth('api')->user();
 
-        // $this->validate($request, [
-        //     'name' => 'required|string|max:200',
-        //     'email' => 'required|string|email|max:200|unique:users,email,'.$user->id,
-        //     'password' => 'sometimes|required|min:8'
-        // ]);
+        $this->validate($request, [
+            'name' => 'required|string|max:200',
+            'email' => 'required|string|email|max:200|unique:users,email,'.$user->id,
+            'password' => 'sometimes|required|min:8'
+        ]);
 
         $currentPhoto = $user->photo;
         if($request->photo != $currentPhoto) {
@@ -73,6 +71,11 @@ class UserController extends Controller
             \Image::make($request->photo)->save(public_path('img/profile/').$name);
             $request->merge(['photo' => $name]);
         }
+
+        if(!empty($request->password)) {
+            $request->merge(['password' => Hash::make($request['password'])]);
+        }
+
         $user->update($request->all());
         return ['message' => "Success"];
     }

@@ -58,7 +58,7 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <input v-model="form.name" type="text" name="name"
-                            placeholder="Name"
+                            placeholder="Nome"
                             class="form-control" :class="{ 'is-invalid': form.errors.has('name') }">
                             <has-error :form="form" field="name"></has-error>
                         </div>
@@ -70,13 +70,13 @@
                         </div>
                         <div class="form-group">
                             <input v-model="form.password" type="password" name="password" id="password"
-                            placeholder="****"
+                            placeholder="Senha"
                             class="form-control" :class="{ 'is-invalid': form.errors.has('password') }">
                             <has-error :form="form" field="password"></has-error>
                         </div>
                         <div class="form-group">
                             <select name="type" v-model="form.type" id="type" class="form-control"
-                            :class="{ 'is-invalid': form.errors.has('name') }">
+                            :class="{ 'is-invalid': form.errors.has('type') }">
                                 <option value="">Tipo</option>
                                 <option value="1">Admin</option>
                                 <option value="2">Usuário</option>
@@ -112,7 +112,7 @@
             }
         },
         methods: {
-            editarUsuario(id) {
+            editarUsuario() {
                 this.form.put('api/user/'+this.form.id)
                 .then(() => {
                     swal.fire(
@@ -123,12 +123,6 @@
                     Fire.$emit('mudouDados');
                     $('#addNovo').modal('hide')
                 }).catch(() => {
-                    swal.fire(
-                        'Falha',
-                        'Algo deu errado!',
-                        'warning'
-                    )
-                    $('#addNovo').modal('hide')
                 });
             },
             editModal(user) {

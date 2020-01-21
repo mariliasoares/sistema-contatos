@@ -54,7 +54,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="./img/admin.png" class="img-circle elevation-2" alt="Admin Image">
+          @if(Auth::user()->type === '1')
+            <img src="./img/admin.png" class="img-circle elevation-2" alt="Admin Image">
+          @else
+            <img src="./img/profile.png" class="img-circle elevation-2" alt="User Image">
+          @endif
         </div>
         <div class="info">
           <a href="#" class="d-block">{{ Auth::user()->name }}</a>
@@ -70,6 +74,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <p>Dashboard</p>
             </router-link>
           </li>
+          @if(Auth::user()->type === '1')
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-cogs blue"></i>
@@ -86,6 +91,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </li>
             </ul>
           </li>
+          @endif
           <li class="nav-item">
             <router-link to="/profile" class="nav-link">
                 <i class="nav-icon fas fa-user-circle orange"></i>
