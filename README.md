@@ -11,3 +11,23 @@
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
+## Run Project
+    
+    * Clone the repo: git clone https://github.com/mariliasoares/sistema-contatos.git
+    * cd to project folder
+    * Run: composer install
+    * Create file .env: cp .env.example .env
+    !IMPORTANT -> Modify .env with your credencials database
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=sistema
+    DB_USERNAME=<your_user_name>
+    DB_PASSWORD=<your_password>
+    * Run php artisan key:generate to generate the app key
+    * Run npm install
+    * Run composer require laravel/passport
+          php artisan passport:install
+          php artisan vendor:publish --tag=passport-migrations
+          php artisan migrate
+    * create a profile folder inside public/img
