@@ -25,3 +25,7 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
           php artisan vendor:publish --tag=passport-migrations
           php artisan migrate
     * create a profile folder inside public/img
+
+    ** @if (GD Library extension not available with this PHP installation)
+    ** https://stackoverflow.com/questions/34009844/gd-library-extension-not-available-with-this-php-installation-ubuntu-nginx
+    ** @endif
