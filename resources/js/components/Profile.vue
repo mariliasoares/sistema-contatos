@@ -39,29 +39,31 @@
                         </div>
                       </div>
                       <div class="form-group row">
-                        <label for="inputExperience" class="col-sm-2 col-form-label">Experience</label>
+                        <label for="inputPassword" class="col-sm-2 col-form-label">Senha</label>
                         <div class="col-sm-10">
-                          <textarea class="form-control" id="inputExperience" placeholder="Experience"></textarea>
+                          <input type="text" v-model="form.password" class="form-control" id="inputSenha" placeholder="***">
                         </div>
                       </div>
                       <div class="form-group row">
-                        <label for="inputSkills" class="col-sm-2 col-form-label">Skills</label>
+                        <label for="inputType" class="col-sm-2 col-form-label">Tipo</label>
                         <div class="col-sm-10">
-                          <input type="text" class="form-control" id="inputSkills" placeholder="Skills">
+                          <select name="type" v-model="form.type" id="type" class="form-control"
+                            :class="{ 'is-invalid': form.errors.has('name') }">
+                            <option value="">Tipo</option>
+                            <option value="1">Admin</option>
+                            <option value="2">Usuário</option>
+                        </select>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="photo" class="col-sm-2 col-form-label">Foto de perfil</label>
+                        <div class="col-sm-10">
+                          <input type="file" @change="updateProfile" name="photo" class="form-input">
                         </div>
                       </div>
                       <div class="form-group row">
                         <div class="offset-sm-2 col-sm-10">
-                          <div class="checkbox">
-                            <label>
-                              <input type="checkbox"> I agree to the <a href="#">terms and conditions</a>
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="form-group row">
-                        <div class="offset-sm-2 col-sm-10">
-                          <button type="submit" class="btn btn-danger">Submit</button>
+                          <button type="submit" @click.prevent="updateInfo" class="btn btn-success">Salvar</button>
                         </div>
                       </div>
                     </form>
@@ -75,24 +77,41 @@
 
 <script>
     export default {
-        data() {
+        data() { //every component should return a data
             return {
                 form: new Form({
                     name: '',
                     email: '',
                     password: '',
                     type: '',
-                    foto: '',
+                    photo: '',
                 })
             }
         },
         mounted() {
             console.log('Component mounted.')
         },
-        created() {
+        methods: {
+          updateInfo() {
+            this.form.put('api/profile/').then(()=> {
+
+            }).catch(() => {
+              
+            })
+          },
+          updateProfile(el) {
+            // console.log('up');
+            let file = el.target.files[0];
+            let reader = new FileReader();
+            reader.onloadend = (file) => {
+              //console.log('RESULT', reader.result)
+              this.form.photo = reader.result;
+            }
+            reader.readAsDataURL(file);
+          }
+        },
+        created() { //http request to server and get the information
             axios.get('api/profile').then(({data}) => (this.form.fill(data)));
-            // console.log(Auth::user()->name);
-            //axios.get("api/profile").then(({data}) => (this.users = data.data));
         }
     }
 </script>

@@ -52,9 +52,31 @@ class UserController extends Controller
     }
 
     public function profile() {
-        return Auth::user();
-        //{{auth()->user()->name}}
+        return auth('api')->user();
     }
+
+    public function updateProfile(Request $request) {
+        $user = auth('api')->user();
+
+        // $this->validate($request, [
+        //     'name' => 'required|string|max:200',
+        //     'email' => 'required|string|email|max:200|unique:users,email,'.$user->id,
+        //     'password' => 'sometimes|required|min:8'
+        // ]);
+
+        $currentPhoto = $user->photo;
+        if($request->photo != $currentPhoto) {
+            //going to take only the extension of the file
+            // $extension = explode('/', explode(':', substr($request->photo, 0, strpos($request->photo, ';')))[1])[1];
+            $name = time().'.' . explode('/', explode(':', substr($request->photo, 0, strpos($request->photo, ';')))[1])[1];
+            //dont need to import cause I use slash here
+            \Image::make($request->photo)->save(public_path('img/profile/').$name);
+            $request->merge(['photo' => $name]);
+        }
+        $user->update($request->all());
+        return ['message' => "Success"];
+    }
+    
 
     public function show($id)
     {
