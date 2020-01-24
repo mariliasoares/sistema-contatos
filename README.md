@@ -26,7 +26,3 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
           php artisan migrate
     * create a profile folder inside public/img
 
-    ** @if (GD Library extension not available with this PHP installation)
-       sudo apt-get install php7.3-gd
-       php -i | grep -i gd
-    ** @endif
