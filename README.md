@@ -9,7 +9,7 @@
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Sistema de CRUD simples desenvolvido em Laravel utilizando o acesso a banco de dados com o MySQL e linguagem PHP.
 
 ## Run Project
     
